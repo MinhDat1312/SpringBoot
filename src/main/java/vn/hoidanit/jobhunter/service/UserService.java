@@ -36,4 +36,16 @@ public class UserService {
         }
         return null;
     }
+
+    public User handleUpdateUser(User updateUser) {
+        User currentUser = this.handleGetUserById(updateUser.getId());
+
+        if (currentUser != null) {
+            currentUser.setName(updateUser.getName());
+            currentUser.setEmail(updateUser.getEmail());
+            currentUser.setPassword(updateUser.getPassword());
+            return this.userRepository.save(currentUser);
+        }
+        return null;
+    }
 }
