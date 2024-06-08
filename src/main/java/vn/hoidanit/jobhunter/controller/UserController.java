@@ -4,8 +4,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import vn.hoidanit.jobhunter.domain.User;
 import vn.hoidanit.jobhunter.service.UserService;
+import vn.hoidanit.jobhunter.service.exception.IdInvalidException;
 
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,8 +45,17 @@ public class UserController {
     }
 
     @GetMapping("/users/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable("id") long id) {
-        return ResponseEntity.status(HttpStatus.OK).body(this.userService.handleGetUserById(id));
+    public ResponseEntity<User> getUserById(@PathVariable("id") String id) throws IdInvalidException {
+        if (Pattern.compile("^[0-9]+$").matcher(id).matches()) {
+            if (this.userService.handleGetUserById(Long.parseLong(id)) != null) {
+                return ResponseEntity.status(HttpStatus.OK)
+                        .body(this.userService.handleGetUserById(Long.parseLong(id)));
+            } else {
+                throw new IdInvalidException("Id user don't exist");
+            }
+        } else {
+            throw new IdInvalidException("Id is number");
+        }
     }
 
     @PutMapping("/users")
