@@ -12,7 +12,7 @@ public class GlobalExceptionHandle {
 
     @ExceptionHandler(value = IdInvalidException.class)
     ResponseEntity<RestResponse<Object>> idResponseEntity(IdInvalidException e) {
-        RestResponse<Object> res = new RestResponse<>();
+        RestResponse<Object> res = new RestResponse<Object>();
         res.setStatusCode(HttpStatus.BAD_REQUEST.value());
         res.setMessage("IdInvalidException");
         res.setError(e.getMessage());
