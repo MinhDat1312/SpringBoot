@@ -22,7 +22,7 @@ public class UserDetailCustom implements UserDetailsService {
         // TODO Auto-generated method stub
         vn.hoidanit.jobhunter.domain.User user = this.userService.handleGetUserByEmail(username);
         if (user == null) {
-            throw new UsernameNotFoundException("username/password không tồn tại");
+            throw new UsernameNotFoundException("username không tồn tại");
         }
 
         return new User(
