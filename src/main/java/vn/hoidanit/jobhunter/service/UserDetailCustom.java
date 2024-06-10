@@ -21,6 +21,9 @@ public class UserDetailCustom implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         // TODO Auto-generated method stub
         vn.hoidanit.jobhunter.domain.User user = this.userService.handleGetUserByEmail(username);
+        if (user == null) {
+            throw new UsernameNotFoundException("username/password không tồn tại");
+        }
 
         return new User(
                 user.getEmail(), user.getPassword(),
