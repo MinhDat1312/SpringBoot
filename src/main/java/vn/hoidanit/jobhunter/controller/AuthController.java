@@ -19,18 +19,18 @@ public class AuthController {
 
     public AuthController(AuthenticationManagerBuilder authenticationManagerBuilder, SecurityUtil securityUtil) {
         this.authenticationManagerBuilder = authenticationManagerBuilder;
-        this.securityUtil=securityUtil;
+        this.securityUtil = securityUtil;
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginDTO> login(@Valid @RequestBody LoginDTO loginDTO) {
+    public ResponseEntity<String> login(@Valid @RequestBody LoginDTO loginDTO) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                 loginDTO.getUsername(), loginDTO.getPassword());
 
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
-        this.securityUtil.createToken(authentication);
+        String accessToken = this.securityUtil.createToken(authentication);
 
-        return ResponseEntity.ok().body(loginDTO);
+        return ResponseEntity.ok().body(accessToken);
     }
 }
