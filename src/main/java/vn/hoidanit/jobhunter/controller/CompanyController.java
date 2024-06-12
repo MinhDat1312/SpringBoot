@@ -1,8 +1,14 @@
 package vn.hoidanit.jobhunter.controller;
 
+import java.util.ArrayList;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,5 +29,23 @@ public class CompanyController {
         Company res = this.companyService.handleCreateCompany(company);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(res);
+    }
+
+    @GetMapping("/companies")
+    public ResponseEntity<ArrayList<Company>> getCompanies() {
+        return ResponseEntity.status(HttpStatus.OK).body(this.companyService.handleGetCompanies());
+    }
+
+    @PutMapping("/companies")
+    public ResponseEntity<Company> updateCompany(@Valid @RequestBody Company company) {
+        Company c = this.companyService.handelUpdateCompany(company);
+
+        return ResponseEntity.ok(c);
+    }
+
+    @DeleteMapping("/companies/{id}")
+    public ResponseEntity<Void> deleteCompany(@PathVariable("id") long id) {
+        this.companyService.handleDeleteCompany(id);
+        return ResponseEntity.ok(null);
     }
 }
