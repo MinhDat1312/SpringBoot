@@ -33,8 +33,8 @@ public class UserService {
         ResultPaginationDTO resultPaginationDTO = new ResultPaginationDTO();
         Meta meta = new Meta();
 
-        meta.setCurrentPage(page.getNumber());
-        meta.setPageSize(page.getSize());
+        meta.setCurrentPage(pageable.getPageNumber() + 1);
+        meta.setPageSize(pageable.getPageSize());
         meta.setPages(page.getTotalPages());
         meta.setTotal(page.getTotalElements());
 
@@ -49,8 +49,8 @@ public class UserService {
         ResultPaginationDTO resultPaginationDTO = new ResultPaginationDTO();
         Meta meta = new Meta();
 
-        meta.setCurrentPage(page.getNumber()+1);
-        meta.setPageSize(page.getSize());
+        meta.setCurrentPage(pageable.getPageNumber() + 1);
+        meta.setPageSize(pageable.getPageSize());
         meta.setPages(page.getTotalPages());
         meta.setTotal(page.getTotalElements());
 
