@@ -12,8 +12,10 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 import vn.hoidanit.jobhunter.domain.dto.LoginDTO;
 import vn.hoidanit.jobhunter.util.SecurityUtil;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @RestController
+@RequestMapping("/api/v1")
 public class AuthController {
     private AuthenticationManagerBuilder authenticationManagerBuilder;
     private SecurityUtil securityUtil;
@@ -31,7 +33,7 @@ public class AuthController {
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
         String accessToken = this.securityUtil.createToken(authentication);
-        
+
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         return ResponseEntity.ok().body(accessToken);

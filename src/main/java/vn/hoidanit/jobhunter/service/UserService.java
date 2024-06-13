@@ -1,6 +1,9 @@
 package vn.hoidanit.jobhunter.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -9,6 +12,9 @@ import org.springframework.stereotype.Service;
 
 import vn.hoidanit.jobhunter.domain.User;
 import vn.hoidanit.jobhunter.domain.dto.Meta;
+import vn.hoidanit.jobhunter.domain.dto.ResCreateUser;
+import vn.hoidanit.jobhunter.domain.dto.ResUpdateUser;
+import vn.hoidanit.jobhunter.domain.dto.ResUser;
 import vn.hoidanit.jobhunter.domain.dto.ResultPaginationDTO;
 import vn.hoidanit.jobhunter.repository.UserRepository;
 
@@ -28,23 +34,7 @@ public class UserService {
         this.userRepository.deleteById(id);
     }
 
-    public ResultPaginationDTO handleGetAllUser(Pageable pageable) {
-        Page<User> page = this.userRepository.findAll(pageable);
-        ResultPaginationDTO resultPaginationDTO = new ResultPaginationDTO();
-        Meta meta = new Meta();
-
-        meta.setCurrentPage(pageable.getPageNumber() + 1);
-        meta.setPageSize(pageable.getPageSize());
-        meta.setPages(page.getTotalPages());
-        meta.setTotal(page.getTotalElements());
-
-        resultPaginationDTO.setMeta(meta);
-        resultPaginationDTO.setResult(page.getContent());
-
-        return resultPaginationDTO;
-    }
-
-    public ResultPaginationDTO handleGetAllUserFilter(Specification<User> spec, Pageable pageable) {
+    public ResultPaginationDTO handleGetAllUsers(Specification<User> spec, Pageable pageable) {
         Page<User> page = this.userRepository.findAll(spec, pageable);
         ResultPaginationDTO resultPaginationDTO = new ResultPaginationDTO();
         Meta meta = new Meta();
@@ -55,7 +45,11 @@ public class UserService {
         meta.setTotal(page.getTotalElements());
 
         resultPaginationDTO.setMeta(meta);
-        resultPaginationDTO.setResult(page.getContent());
+
+        List<ResUser> list = page.getContent().stream().map(p -> new ResUser(p.getId(), p.getEmail(), p.getName(),
+                p.getGender(), p.getAddress(), p.getAge(), p.getUpdateAt(), p.getCreateAt()))
+                .collect(Collectors.toList());
+        resultPaginationDTO.setResult(list);
 
         return resultPaginationDTO;
     }
@@ -74,14 +68,66 @@ public class UserService {
 
         if (currentUser != null) {
             currentUser.setName(updateUser.getName());
-            currentUser.setEmail(updateUser.getEmail());
-            currentUser.setPassword(updateUser.getPassword());
-            return this.userRepository.save(currentUser);
+            currentUser.setGender(updateUser.getGender());
+            currentUser.setAge(updateUser.getAge());
+            currentUser.setAddress(updateUser.getAddress());
+
+            currentUser = this.userRepository.save(currentUser);
         }
-        return null;
+        return currentUser;
     }
 
     public User handleGetUserByEmail(String email) {
         return this.userRepository.findByEmail(email);
+    }
+
+    public boolean isEmailExist(String email) {
+        return this.userRepository.existsByEmail(email);
+    }
+
+    public boolean isIdExist(long id) {
+        return this.userRepository.existsById(id);
+    }
+
+    public ResCreateUser convertToResCreateUser(User user) {
+        ResCreateUser resCreateUser = new ResCreateUser();
+
+        resCreateUser.setId(user.getId());
+        resCreateUser.setName(user.getName());
+        resCreateUser.setEmail(user.getEmail());
+        resCreateUser.setGender(user.getGender());
+        resCreateUser.setAddress(user.getAddress());
+        resCreateUser.setAge(user.getAge());
+        resCreateUser.setCreateAt(user.getCreateAt());
+
+        return resCreateUser;
+    }
+
+    public ResUpdateUser convertToResUpdateUser(User user) {
+        ResUpdateUser resUpdateUser = new ResUpdateUser();
+
+        resUpdateUser.setId(user.getId());
+        resUpdateUser.setName(user.getName());
+        resUpdateUser.setGender(user.getGender());
+        resUpdateUser.setAddress(user.getAddress());
+        resUpdateUser.setAge(user.getAge());
+        resUpdateUser.setUpdateAt(user.getUpdateAt());
+
+        return resUpdateUser;
+    }
+
+    public ResUser convertToResUser(User user) {
+        ResUser resUser = new ResUser();
+
+        resUser.setId(user.getId());
+        resUser.setEmail(user.getEmail());
+        resUser.setName(user.getName());
+        resUser.setGender(user.getGender());
+        resUser.setAddress(user.getAddress());
+        resUser.setAge(user.getAge());
+        resUser.setCreateAt(user.getCreateAt());
+        resUser.setUpdateAt(user.getUpdateAt());
+
+        return resUser;
     }
 }

@@ -12,32 +12,34 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import vn.hoidanit.jobhunter.domain.RestResponse;
 
 @ControllerAdvice
 public class GlobalExceptionHandle {
 
-    @ExceptionHandler(value ={
+    @ExceptionHandler(value = {
             BadCredentialsException.class,
-            UsernameNotFoundException.class})
-    ResponseEntity<RestResponse<Object>> exceptionResponseEntity (Exception e) {
+            UsernameNotFoundException.class,
+            IdInvalidException.class })
+    ResponseEntity<RestResponse<Object>> exceptionResponseEntity(Exception e) {
         RestResponse<Object> res = new RestResponse<Object>();
         res.setStatusCode(HttpStatus.BAD_REQUEST.value());
         res.setMessage("Exception occurs");
-        res.setError( e.getMessage());
+        res.setError(e.getMessage());
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
     }
 
-    @ExceptionHandler(value = IdInvalidException.class)
-    ResponseEntity<RestResponse<Object>> idResponseEntity(IdInvalidException e) {
+    @ExceptionHandler(value = NoResourceFoundException.class)
+    ResponseEntity<RestResponse<Object>> notFoundException(Exception e) {
         RestResponse<Object> res = new RestResponse<Object>();
-        res.setStatusCode(HttpStatus.BAD_REQUEST.value());
-        res.setMessage("IdInvalidException");
+        res.setStatusCode(HttpStatus.NOT_FOUND.value());
+        res.setMessage("404 Not Found. URL may not exist");
         res.setError(e.getMessage());
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(res);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
