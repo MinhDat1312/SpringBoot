@@ -1,6 +1,5 @@
 package vn.hoidanit.jobhunter.service;
 
-import java.util.ArrayList;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;

@@ -9,7 +9,6 @@ import vn.hoidanit.jobhunter.domain.dto.ResultPaginationDTO;
 import vn.hoidanit.jobhunter.service.UserService;
 import vn.hoidanit.jobhunter.util.exception.IdInvalidException;
 
-import java.util.ArrayList;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
