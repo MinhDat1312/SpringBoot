@@ -2,13 +2,20 @@ package vn.hoidanit.jobhunter.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 
+import com.turkraft.springfilter.boot.Filter;
+
 import vn.hoidanit.jobhunter.domain.User;
+import vn.hoidanit.jobhunter.domain.dto.ResultPaginationDTO;
 import vn.hoidanit.jobhunter.service.UserService;
 import vn.hoidanit.jobhunter.util.exception.IdInvalidException;
 
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,6 +24,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
@@ -46,8 +54,19 @@ public class UserController {
     }
 
     @GetMapping("/users")
-    public ResponseEntity<ArrayList<User>> getAllUser() {
-        return ResponseEntity.status(HttpStatus.OK).body(this.userService.handleGetAllUser());
+    public ResponseEntity<ResultPaginationDTO> getAllUser(
+            @RequestParam("page") Optional<String> currentPage,
+            @RequestParam("size") Optional<String> pageSize) {
+        String sCurrentPage = currentPage.isPresent() ? currentPage.get() : "";
+        String sPageSize = pageSize.isPresent() ? pageSize.get() : "";
+        Pageable pageable = PageRequest.of(Integer.parseInt(sCurrentPage) - 1, Integer.parseInt(sPageSize));
+
+        return ResponseEntity.status(HttpStatus.OK).body(this.userService.handleGetAllUser(pageable));
+    }
+
+    @GetMapping("/search/users")
+    public ResponseEntity<ResultPaginationDTO> getAllUserFilter(@Filter Specification<User> spec, Pageable pageable) {
+        return ResponseEntity.status(HttpStatus.OK).body(this.userService.handleGetAllUserFilter(spec, pageable));
     }
 
     @GetMapping("/users/{id}")
