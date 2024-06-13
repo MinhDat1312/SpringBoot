@@ -1,6 +1,5 @@
 package vn.hoidanit.jobhunter.controller;
 
-
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
@@ -19,6 +18,7 @@ import jakarta.validation.Valid;
 import vn.hoidanit.jobhunter.domain.Company;
 import vn.hoidanit.jobhunter.domain.dto.ResultPaginationDTO;
 import vn.hoidanit.jobhunter.service.CompanyService;
+import vn.hoidanit.jobhunter.util.annotation.ApiMessage;
 
 @RestController
 public class CompanyController {
@@ -36,6 +36,7 @@ public class CompanyController {
     }
 
     @GetMapping("/companies")
+    @ApiMessage("Get all companies")
     public ResponseEntity<ResultPaginationDTO> getCompanies(@Filter Specification<Company> spec, Pageable pageable) {
         return ResponseEntity.status(HttpStatus.OK).body(this.companyService.handleGetCompanies(spec, pageable));
     }
