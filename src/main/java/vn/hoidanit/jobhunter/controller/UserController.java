@@ -14,10 +14,8 @@ import vn.hoidanit.jobhunter.service.UserService;
 import vn.hoidanit.jobhunter.util.annotation.ApiMessage;
 import vn.hoidanit.jobhunter.util.exception.IdInvalidException;
 
-import java.util.Optional;
 import java.util.regex.Pattern;
 
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
@@ -47,7 +45,7 @@ public class UserController {
     public ResponseEntity<ResCreateUser> createUser(@Valid @RequestBody User postManUser) throws IdInvalidException {
         if (this.userService.isEmailExist(postManUser.getEmail())) {
             throw new IdInvalidException("Email exists: " + postManUser.getEmail());
-        }   
+        }
 
         String hashCode = this.passwordEncoder.encode(postManUser.getPassword());
         postManUser.setPassword(hashCode);
