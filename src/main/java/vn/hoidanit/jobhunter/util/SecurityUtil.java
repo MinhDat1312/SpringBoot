@@ -17,6 +17,8 @@ import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
 
+import vn.hoidanit.jobhunter.domain.dto.ResLogin;
+
 @Service
 public class SecurityUtil {
     private JwtEncoder jwtEncoder;
@@ -29,18 +31,37 @@ public class SecurityUtil {
     @Value("${hoidanit.jwt.base64-secret}")
     private String jwtKey;
 
-    @Value("${hoidanit.jwt.token-validity-in-seconds}")
-    private long jwtExpiration;
+    @Value("${hoidanit.jwt.access-token-validity-in-seconds}")
+    private long accessTokenExpiration;
 
-    public String createToken(Authentication authentication) {
+    @Value("${hoidanit.jwt.refresh-token-validity-in-seconds}")
+    private long refreshTokenExpiration;
+
+    public String createAccessToken(Authentication authentication) {
         Instant now = Instant.now();
-        Instant validity = now.plus(this.jwtExpiration, ChronoUnit.SECONDS);
+        Instant validity = now.plus(this.accessTokenExpiration, ChronoUnit.SECONDS);
 
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuedAt(now)
                 .expiresAt(validity)
                 .subject(authentication.getName())
                 .claim("hoidanit", authentication)
+                .build();
+
+        JwsHeader jwsHeader = JwsHeader.with(JWT_ALGORITHM).build();
+
+        return this.jwtEncoder.encode(JwtEncoderParameters.from(jwsHeader, claims)).getTokenValue();
+    }
+
+    public String createRefreshToken(String email, ResLogin resLogin) {
+        Instant now = Instant.now();
+        Instant validity = now.plus(this.refreshTokenExpiration, ChronoUnit.SECONDS);
+
+        JwtClaimsSet claims = JwtClaimsSet.builder()
+                .issuedAt(now)
+                .expiresAt(validity)
+                .subject(email)
+                .claim("user", resLogin.getUserLogin())
                 .build();
 
         JwsHeader jwsHeader = JwsHeader.with(JWT_ALGORITHM).build();
@@ -67,34 +88,40 @@ public class SecurityUtil {
     }
 
     // public static Optional<String> getCurrentUserJWT() {
-    //     SecurityContext securityContext = SecurityContextHolder.getContext();
-    //     return Optional.ofNullable(securityContext.getAuthentication())
-    //         .filter(authentication -> authentication.getCredentials() instanceof String)
-    //         .map(authentication -> (String) authentication.getCredentials());
+    // SecurityContext securityContext = SecurityContextHolder.getContext();
+    // return Optional.ofNullable(securityContext.getAuthentication())
+    // .filter(authentication -> authentication.getCredentials() instanceof String)
+    // .map(authentication -> (String) authentication.getCredentials());
     // }
 
     // public static boolean isAuthenticated() {
-    //     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    //     return authentication != null && getAuthorities(authentication).noneMatch(AuthoritiesConstants.ANONYMOUS::equals);
+    // Authentication authentication =
+    // SecurityContextHolder.getContext().getAuthentication();
+    // return authentication != null &&
+    // getAuthorities(authentication).noneMatch(AuthoritiesConstants.ANONYMOUS::equals);
     // }
 
     // public static boolean hasCurrentUserAnyOfAuthorities(String... authorities) {
-    //     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    //     return (
-    //         authentication != null && getAuthorities(authentication).anyMatch(authority -> Arrays.asList(authorities).contains(authority))
-    //     );
+    // Authentication authentication =
+    // SecurityContextHolder.getContext().getAuthentication();
+    // return (
+    // authentication != null && getAuthorities(authentication).anyMatch(authority
+    // -> Arrays.asList(authorities).contains(authority))
+    // );
     // }
 
-    // public static boolean hasCurrentUserNoneOfAuthorities(String... authorities) {
-    //     return !hasCurrentUserAnyOfAuthorities(authorities);
+    // public static boolean hasCurrentUserNoneOfAuthorities(String... authorities)
+    // {
+    // return !hasCurrentUserAnyOfAuthorities(authorities);
     // }
 
     // public static boolean hasCurrentUserThisAuthority(String authority) {
-    //     return hasCurrentUserAnyOfAuthorities(authority);
+    // return hasCurrentUserAnyOfAuthorities(authority);
     // }
 
     // private static Stream<String> getAuthorities(Authentication authentication) {
-    //     return authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority);
+    // return
+    // authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority);
     // }
 
 }

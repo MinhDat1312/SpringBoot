@@ -129,4 +129,13 @@ public class UserService {
 
         return resUser;
     }
+
+    public void updateRefreshToken(String email, String refreshToken) {
+        User currentUser = this.handleGetUserByEmail(email);
+
+        if (currentUser != null) {
+            currentUser.setRefreshToken(refreshToken);
+            this.userRepository.save(currentUser);
+        }
+    }
 }
