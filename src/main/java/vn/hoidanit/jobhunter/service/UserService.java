@@ -46,7 +46,7 @@ public class UserService {
         resultPaginationDTO.setMeta(meta);
 
         List<ResUser> list = page.getContent().stream().map(p -> new ResUser(p.getId(), p.getEmail(), p.getName(),
-                p.getGender(), p.getAddress(), p.getAge(), p.getUpdateAt(), p.getCreateAt()))
+                p.getGender(), p.getAddress(), p.getAge(), p.getUpdatedAt(), p.getCreatedAt()))
                 .collect(Collectors.toList());
         resultPaginationDTO.setResult(list);
 
@@ -70,10 +70,12 @@ public class UserService {
             currentUser.setGender(updateUser.getGender());
             currentUser.setAge(updateUser.getAge());
             currentUser.setAddress(updateUser.getAddress());
+            currentUser.setEmail(updateUser.getEmail());
 
-            currentUser = this.userRepository.save(currentUser);
+            return this.userRepository.save(currentUser);
         }
-        return currentUser;
+
+        return null;
     }
 
     public User handleGetUserByEmail(String email) {
@@ -97,7 +99,7 @@ public class UserService {
         resCreateUser.setGender(user.getGender());
         resCreateUser.setAddress(user.getAddress());
         resCreateUser.setAge(user.getAge());
-        resCreateUser.setCreateAt(user.getCreateAt());
+        resCreateUser.setCreatedAt(user.getCreatedAt());
 
         return resCreateUser;
     }
@@ -110,7 +112,7 @@ public class UserService {
         resUpdateUser.setGender(user.getGender());
         resUpdateUser.setAddress(user.getAddress());
         resUpdateUser.setAge(user.getAge());
-        resUpdateUser.setUpdateAt(user.getUpdateAt());
+        resUpdateUser.setUpdatedAt(user.getUpdatedAt());
 
         return resUpdateUser;
     }
@@ -124,8 +126,8 @@ public class UserService {
         resUser.setGender(user.getGender());
         resUser.setAddress(user.getAddress());
         resUser.setAge(user.getAge());
-        resUser.setCreateAt(user.getCreateAt());
-        resUser.setUpdateAt(user.getUpdateAt());
+        resUser.setCreatedAt(user.getCreatedAt());
+        resUser.setUpdatedAt(user.getUpdatedAt());
 
         return resUser;
     }
