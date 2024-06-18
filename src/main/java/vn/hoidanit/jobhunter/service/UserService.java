@@ -11,9 +11,9 @@ import org.springframework.stereotype.Service;
 
 import vn.hoidanit.jobhunter.domain.User;
 import vn.hoidanit.jobhunter.domain.dto.Meta;
-import vn.hoidanit.jobhunter.domain.dto.ResCreateUser;
-import vn.hoidanit.jobhunter.domain.dto.ResUpdateUser;
-import vn.hoidanit.jobhunter.domain.dto.ResUser;
+import vn.hoidanit.jobhunter.domain.dto.ResCreateUserDTO;
+import vn.hoidanit.jobhunter.domain.dto.ResUpdateUserDTO;
+import vn.hoidanit.jobhunter.domain.dto.ResUserDTO;
 import vn.hoidanit.jobhunter.domain.dto.ResultPaginationDTO;
 import vn.hoidanit.jobhunter.repository.UserRepository;
 
@@ -45,7 +45,7 @@ public class UserService {
 
         resultPaginationDTO.setMeta(meta);
 
-        List<ResUser> list = page.getContent().stream().map(p -> new ResUser(p.getId(), p.getEmail(), p.getName(),
+        List<ResUserDTO> list = page.getContent().stream().map(p -> new ResUserDTO(p.getId(), p.getEmail(), p.getName(),
                 p.getGender(), p.getAddress(), p.getAge(), p.getUpdatedAt(), p.getCreatedAt()))
                 .collect(Collectors.toList());
         resultPaginationDTO.setResult(list);
@@ -90,8 +90,8 @@ public class UserService {
         return this.userRepository.existsById(id);
     }
 
-    public ResCreateUser convertToResCreateUser(User user) {
-        ResCreateUser resCreateUser = new ResCreateUser();
+    public ResCreateUserDTO convertToResCreateUser(User user) {
+        ResCreateUserDTO resCreateUser = new ResCreateUserDTO();
 
         resCreateUser.setId(user.getId());
         resCreateUser.setName(user.getName());
@@ -104,8 +104,8 @@ public class UserService {
         return resCreateUser;
     }
 
-    public ResUpdateUser convertToResUpdateUser(User user) {
-        ResUpdateUser resUpdateUser = new ResUpdateUser();
+    public ResUpdateUserDTO convertToResUpdateUser(User user) {
+        ResUpdateUserDTO resUpdateUser = new ResUpdateUserDTO();
 
         resUpdateUser.setId(user.getId());
         resUpdateUser.setName(user.getName());
@@ -117,8 +117,8 @@ public class UserService {
         return resUpdateUser;
     }
 
-    public ResUser convertToResUser(User user) {
-        ResUser resUser = new ResUser();
+    public ResUserDTO convertToResUser(User user) {
+        ResUserDTO resUser = new ResUserDTO();
 
         resUser.setId(user.getId());
         resUser.setEmail(user.getEmail());

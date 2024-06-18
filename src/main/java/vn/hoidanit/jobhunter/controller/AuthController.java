@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import vn.hoidanit.jobhunter.domain.User;
-import vn.hoidanit.jobhunter.domain.dto.LoginDTO;
-import vn.hoidanit.jobhunter.domain.dto.ResLogin;
+import vn.hoidanit.jobhunter.domain.dto.ReqLoginDTO;
+import vn.hoidanit.jobhunter.domain.dto.ResLoginDTO;
 import vn.hoidanit.jobhunter.service.UserService;
 import vn.hoidanit.jobhunter.util.SecurityUtil;
 import vn.hoidanit.jobhunter.util.annotation.ApiMessage;
@@ -44,7 +44,7 @@ public class AuthController {
         }
 
         @PostMapping("/auth/login")
-        public ResponseEntity<ResLogin> login(@Valid @RequestBody LoginDTO loginDTO) {
+        public ResponseEntity<ResLoginDTO> login(@Valid @RequestBody ReqLoginDTO loginDTO) {
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                                 loginDTO.getUsername(), loginDTO.getPassword());
 
@@ -52,10 +52,10 @@ public class AuthController {
                                 .authenticate(authenticationToken);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
-                ResLogin resLogin = new ResLogin();
+                ResLoginDTO resLogin = new ResLoginDTO();
                 User currentUserLogin = this.userService.handleGetUserByEmail(loginDTO.getUsername());
                 if (currentUserLogin != null) {
-                        ResLogin.UserLogin userLogin = new ResLogin.UserLogin(currentUserLogin.getId(),
+                        ResLoginDTO.UserLogin userLogin = new ResLoginDTO.UserLogin(currentUserLogin.getId(),
                                         currentUserLogin.getEmail(),
                                         currentUserLogin.getName());
                         resLogin.setUserLogin(userLogin);
@@ -82,13 +82,13 @@ public class AuthController {
 
         @GetMapping("/auth/account")
         @ApiMessage("Get user information")
-        public ResponseEntity<ResLogin.UserGetAccount> getAccount() {
+        public ResponseEntity<ResLoginDTO.UserGetAccount> getAccount() {
                 String email = SecurityUtil.getCurrentUserLogin().isPresent() ? SecurityUtil.getCurrentUserLogin().get()
                                 : "";
                 User currentUser = this.userService.handleGetUserByEmail(email);
 
-                ResLogin.UserLogin userLogin = new ResLogin.UserLogin();
-                ResLogin.UserGetAccount userGetAccount=new ResLogin.UserGetAccount();
+                ResLoginDTO.UserLogin userLogin = new ResLoginDTO.UserLogin();
+                ResLoginDTO.UserGetAccount userGetAccount=new ResLoginDTO.UserGetAccount();
                 if (currentUser != null) {
                         userLogin.setId(currentUser.getId());
                         userLogin.setEmail(currentUser.getEmail());
@@ -101,7 +101,7 @@ public class AuthController {
 
         @GetMapping("/auth/refresh")
         @ApiMessage("Get refresh token")
-        public ResponseEntity<ResLogin> getRefreshToken(
+        public ResponseEntity<ResLoginDTO> getRefreshToken(
                         @CookieValue(name = "refreshToken", defaultValue = "missingToken") String refreshToken)
                         throws IdInvalidException {
                 if (refreshToken.equals("missingToken")) {
@@ -116,8 +116,8 @@ public class AuthController {
                         throw new IdInvalidException("Refresh token is invalid");
                 }
 
-                ResLogin resLogin = new ResLogin();
-                ResLogin.UserLogin userLogin = new ResLogin.UserLogin();
+                ResLoginDTO resLogin = new ResLoginDTO();
+                ResLoginDTO.UserLogin userLogin = new ResLoginDTO.UserLogin();
 
                 userLogin.setId(currentUser.getId());
                 userLogin.setEmail(currentUser.getEmail());

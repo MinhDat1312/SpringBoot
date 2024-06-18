@@ -6,9 +6,9 @@ import com.turkraft.springfilter.boot.Filter;
 
 import jakarta.validation.Valid;
 import vn.hoidanit.jobhunter.domain.User;
-import vn.hoidanit.jobhunter.domain.dto.ResCreateUser;
-import vn.hoidanit.jobhunter.domain.dto.ResUpdateUser;
-import vn.hoidanit.jobhunter.domain.dto.ResUser;
+import vn.hoidanit.jobhunter.domain.dto.ResCreateUserDTO;
+import vn.hoidanit.jobhunter.domain.dto.ResUpdateUserDTO;
+import vn.hoidanit.jobhunter.domain.dto.ResUserDTO;
 import vn.hoidanit.jobhunter.domain.dto.ResultPaginationDTO;
 import vn.hoidanit.jobhunter.service.UserService;
 import vn.hoidanit.jobhunter.util.annotation.ApiMessage;
@@ -42,7 +42,7 @@ public class UserController {
     }
 
     @PostMapping("/users")
-    public ResponseEntity<ResCreateUser> createUser(@Valid @RequestBody User postManUser) throws IdInvalidException {
+    public ResponseEntity<ResCreateUserDTO> createUser(@Valid @RequestBody User postManUser) throws IdInvalidException {
         if (this.userService.isEmailExist(postManUser.getEmail())) {
             throw new IdInvalidException("Email exists: " + postManUser.getEmail());
         }
@@ -70,7 +70,7 @@ public class UserController {
     }
 
     @GetMapping("/users/{id}")
-    public ResponseEntity<ResUser> getUserById(@PathVariable("id") String id) throws IdInvalidException {
+    public ResponseEntity<ResUserDTO> getUserById(@PathVariable("id") String id) throws IdInvalidException {
         if (Pattern.compile("^[0-9]+$").matcher(id).matches()) {
             User user = this.userService.handleGetUserById(Long.parseLong(id));
             if (user != null) {
@@ -85,7 +85,7 @@ public class UserController {
     }
 
     @PutMapping("/users")
-    public ResponseEntity<ResUpdateUser> updateUser(@RequestBody User updateUser) throws IdInvalidException {
+    public ResponseEntity<ResUpdateUserDTO> updateUser(@RequestBody User updateUser) throws IdInvalidException {
         User user = this.userService.handleUpdateUser(updateUser);
 
         if (user == null) {
