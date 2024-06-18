@@ -20,4 +20,13 @@ public class ResCreateUserDTO {
 
     // @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss a", timezone = "GMT+7")
     private Instant createdAt;
+
+    private CompanyUserCreate company;
+
+    @Getter
+    @Setter
+    public static class CompanyUserCreate {
+        private long id;
+        private String name;
+    }
 }

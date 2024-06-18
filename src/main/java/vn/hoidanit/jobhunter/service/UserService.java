@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import vn.hoidanit.jobhunter.domain.Company;
 import vn.hoidanit.jobhunter.domain.User;
 import vn.hoidanit.jobhunter.domain.response.ResCreateUserDTO;
 import vn.hoidanit.jobhunter.domain.response.ResUpdateUserDTO;
@@ -19,12 +20,19 @@ import vn.hoidanit.jobhunter.repository.UserRepository;
 @Service
 public class UserService {
     private UserRepository userRepository;
+    private CompanyService companyService;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, CompanyService companyService) {
         this.userRepository = userRepository;
+        this.companyService = companyService;
     }
 
     public User handleCreateUser(User user) {
+        if (user.getCompany() != null) {
+            Company company = this.companyService.handleGetCompanyById(user.getCompany().getId());
+            user.setCompany(company != null ? company : null);
+        }
+
         return this.userRepository.save(user);
     }
 
@@ -45,7 +53,8 @@ public class UserService {
         resultPaginationDTO.setMeta(meta);
 
         List<ResUserDTO> list = page.getContent().stream().map(p -> new ResUserDTO(p.getId(), p.getEmail(), p.getName(),
-                p.getGender(), p.getAddress(), p.getAge(), p.getUpdatedAt(), p.getCreatedAt()))
+                p.getGender(), p.getAddress(), p.getAge(), p.getUpdatedAt(), p.getCreatedAt(),
+                p.getCompany() != null ? new ResUserDTO.CompanyUser(p.getCompany().getId(), p.getCompany().getName()) : null))
                 .collect(Collectors.toList());
         resultPaginationDTO.setResult(list);
 
@@ -71,6 +80,11 @@ public class UserService {
             currentUser.setAddress(updateUser.getAddress());
             currentUser.setEmail(updateUser.getEmail());
 
+            if (updateUser.getCompany() != null) {
+                Company company = this.companyService.handleGetCompanyById(updateUser.getCompany().getId());
+                currentUser.setCompany(company != null ? company : null);
+            }
+
             return this.userRepository.save(currentUser);
         }
 
@@ -91,6 +105,7 @@ public class UserService {
 
     public ResCreateUserDTO convertToResCreateUser(User user) {
         ResCreateUserDTO resCreateUser = new ResCreateUserDTO();
+        ResCreateUserDTO.CompanyUserCreate companyUser = new ResCreateUserDTO.CompanyUserCreate();
 
         resCreateUser.setId(user.getId());
         resCreateUser.setName(user.getName());
@@ -100,11 +115,19 @@ public class UserService {
         resCreateUser.setAge(user.getAge());
         resCreateUser.setCreatedAt(user.getCreatedAt());
 
+        if (user.getCompany() != null) {
+            companyUser.setId(user.getCompany().getId());
+            companyUser.setName(user.getCompany().getName());
+
+            resCreateUser.setCompany(companyUser);
+        }
+
         return resCreateUser;
     }
 
     public ResUpdateUserDTO convertToResUpdateUser(User user) {
         ResUpdateUserDTO resUpdateUser = new ResUpdateUserDTO();
+        ResUpdateUserDTO.CompanyUserUpdate companyUserUpdate = new ResUpdateUserDTO.CompanyUserUpdate();
 
         resUpdateUser.setId(user.getId());
         resUpdateUser.setName(user.getName());
@@ -112,6 +135,13 @@ public class UserService {
         resUpdateUser.setAddress(user.getAddress());
         resUpdateUser.setAge(user.getAge());
         resUpdateUser.setUpdatedAt(user.getUpdatedAt());
+
+        if (user.getCompany() != null) {
+            companyUserUpdate.setId(user.getCompany().getId());
+            companyUserUpdate.setName(user.getCompany().getName());
+
+            resUpdateUser.setCompany(companyUserUpdate);
+        }
 
         return resUpdateUser;
     }
@@ -127,6 +157,14 @@ public class UserService {
         resUser.setAge(user.getAge());
         resUser.setCreatedAt(user.getCreatedAt());
         resUser.setUpdatedAt(user.getUpdatedAt());
+
+        if (user.getCompany() != null) {
+            ResUserDTO.CompanyUser companyUser = new ResUserDTO.CompanyUser();
+            companyUser.setId(user.getCompany().getId());
+            companyUser.setName(user.getCompany().getName());
+
+            resUser.setCompany(companyUser);
+        }
 
         return resUser;
     }
