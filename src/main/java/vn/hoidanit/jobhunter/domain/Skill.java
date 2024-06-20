@@ -36,7 +36,7 @@ public class Skill {
     private String createdBy;
     private String updatedBy;
 
-    @ManyToMany(mappedBy = "skills", fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "skills")
     @JsonIgnore
     private List<Job> jobs;
 

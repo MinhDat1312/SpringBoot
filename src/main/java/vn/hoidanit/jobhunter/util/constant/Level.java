@@ -1,5 +1,5 @@
 package vn.hoidanit.jobhunter.util.constant;
 
 public enum Level {
-    INTERN, FRESHER, MIDDLE, SENIOR
+    INTERN, FRESHER, MIDDLE, SENIOR, JUNIOR
 }
