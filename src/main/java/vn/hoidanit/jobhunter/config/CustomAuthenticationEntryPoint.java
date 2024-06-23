@@ -38,7 +38,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
                 .orElse(authException.getMessage());
         res.setError(errorMessage);
 
-        res.setMessage("Token không hợp lệ (hết hạn, không đúng)");
+        res.setMessage("Token is invalid (expired or wrong)");
 
         mapper.writeValue(response.getWriter(), res);
     }

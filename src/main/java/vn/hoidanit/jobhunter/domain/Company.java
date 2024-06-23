@@ -31,7 +31,7 @@ public class Company {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @NotBlank(message = "Tên không để trống")
+    @NotBlank(message = "Name company is not empty")
     private String name;
 
     @Column(columnDefinition = "MEDIUMTEXT")

@@ -4,10 +4,10 @@ import jakarta.validation.constraints.NotBlank;
 
 public class ReqLoginDTO {
 
-    @NotBlank(message = "username không để trống")
+    @NotBlank(message = "Username is not empty")
     private String username;
 
-    @NotBlank(message = "password không để trống")
+    @NotBlank(message = "Password is not empty")
     private String password;
 
     public String getUsername() {

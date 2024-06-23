@@ -39,10 +39,10 @@ public class User {
 
     private String name;
 
-    @NotBlank(message = "Email is not blank")
+    @NotBlank(message = "Email is not empty")
     private String email;
 
-    @NotBlank(message = "password is not blank")
+    @NotBlank(message = "Password is not empty")
     private String password;
 
     private int age;
