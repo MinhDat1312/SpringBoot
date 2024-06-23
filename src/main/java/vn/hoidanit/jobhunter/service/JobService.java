@@ -9,11 +9,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import vn.hoidanit.jobhunter.domain.Company;
 import vn.hoidanit.jobhunter.domain.Job;
 import vn.hoidanit.jobhunter.domain.Skill;
 import vn.hoidanit.jobhunter.domain.response.ResultPaginationDTO;
 import vn.hoidanit.jobhunter.domain.response.job.ResCreateJobDTO;
 import vn.hoidanit.jobhunter.domain.response.job.ResUpdateJobDTO;
+import vn.hoidanit.jobhunter.repository.CompanyRepository;
 import vn.hoidanit.jobhunter.repository.JobRepository;
 import vn.hoidanit.jobhunter.repository.SkillRepository;
 
@@ -21,10 +23,13 @@ import vn.hoidanit.jobhunter.repository.SkillRepository;
 public class JobService {
     private JobRepository jobRepository;
     private SkillRepository skillRepository;
+    private CompanyRepository companyRepository;
 
-    public JobService(JobRepository jobRepository, SkillRepository skillRepository) {
+    public JobService(JobRepository jobRepository, SkillRepository skillRepository,
+            CompanyRepository companyRepository) {
         this.jobRepository = jobRepository;
         this.skillRepository = skillRepository;
+        this.companyRepository = companyRepository;
     }
 
     public Job handleGetJobById(Long id) {
@@ -40,6 +45,14 @@ public class JobService {
 
             job.setSkills(skills);
         }
+
+        if (job.getCompany() != null) {
+            Optional<Company> optional = this.companyRepository.findById(job.getCompany().getId());
+            if (optional.isPresent()) {
+                job.setCompany(optional.get());
+            }
+        }
+
         Job saveJob = this.jobRepository.save(job);
 
         ResCreateJobDTO resCreateJobDTO = new ResCreateJobDTO();
@@ -71,6 +84,23 @@ public class JobService {
 
             currentJob.setSkills(skills);
         }
+
+        if (job.getCompany() != null) {
+            Optional<Company> optional = this.companyRepository.findById(job.getCompany().getId());
+            if (optional.isPresent()) {
+                currentJob.setCompany(optional.get());
+            }
+        }
+
+        currentJob.setName(job.getName());
+        currentJob.setSalary(job.getSalary());
+        currentJob.setQuantity(job.getQuantity());
+        currentJob.setLocation(job.getLocation());
+        currentJob.setLevel(job.getLevel());
+        currentJob.setStartDate(job.getStartDate());
+        currentJob.setEndDate(job.getEndDate());
+        currentJob.setActive(job.isActive());
+
         Job saveJob = this.jobRepository.save(currentJob);
 
         ResUpdateJobDTO resUpdateJobDTO = new ResUpdateJobDTO();
@@ -98,12 +128,12 @@ public class JobService {
         this.jobRepository.deleteById(id);
     }
 
-    public ResultPaginationDTO handleGetAllJobs(Specification<Job> spec, Pageable pageable){
-        Page<Job> page=this.jobRepository.findAll(spec, pageable);
-        ResultPaginationDTO resultPaginationDTO=new ResultPaginationDTO();
-        ResultPaginationDTO.Meta meta=new ResultPaginationDTO.Meta();
+    public ResultPaginationDTO handleGetAllJobs(Specification<Job> spec, Pageable pageable) {
+        Page<Job> page = this.jobRepository.findAll(spec, pageable);
+        ResultPaginationDTO resultPaginationDTO = new ResultPaginationDTO();
+        ResultPaginationDTO.Meta meta = new ResultPaginationDTO.Meta();
 
-        meta.setCurrentPage(pageable.getPageNumber()+1);
+        meta.setCurrentPage(pageable.getPageNumber() + 1);
         meta.setPageSize(pageable.getPageSize());
         meta.setPages(page.getTotalPages());
         meta.setTotal(page.getTotalElements());

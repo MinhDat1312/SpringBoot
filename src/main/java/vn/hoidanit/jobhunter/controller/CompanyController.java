@@ -20,6 +20,7 @@ import vn.hoidanit.jobhunter.domain.Company;
 import vn.hoidanit.jobhunter.domain.response.ResultPaginationDTO;
 import vn.hoidanit.jobhunter.service.CompanyService;
 import vn.hoidanit.jobhunter.util.annotation.ApiMessage;
+import vn.hoidanit.jobhunter.util.exception.IdInvalidException;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -41,6 +42,15 @@ public class CompanyController {
     @ApiMessage("Get all companies")
     public ResponseEntity<ResultPaginationDTO> getCompanies(@Filter Specification<Company> spec, Pageable pageable) {
         return ResponseEntity.status(HttpStatus.OK).body(this.companyService.handleGetCompanies(spec, pageable));
+    }
+
+    @GetMapping("/companies/{id}")
+    public ResponseEntity<Company> getCompanyById(@PathVariable("id") long id) throws IdInvalidException {
+        if (this.companyService.handleGetCompanyById(id) != null) {
+            return ResponseEntity.ok().body(this.companyService.handleGetCompanyById(id));
+        } else {
+            throw new IdInvalidException("Company doesn't exist");
+        }
     }
 
     @PutMapping("/companies")
