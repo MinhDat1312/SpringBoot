@@ -45,7 +45,7 @@ public class UserService {
         ResultPaginationDTO resultPaginationDTO = new ResultPaginationDTO();
         ResultPaginationDTO.Meta meta = new ResultPaginationDTO.Meta();
 
-        meta.setCurrentPage(pageable.getPageNumber() + 1);
+        meta.setPage(pageable.getPageNumber() + 1);
         meta.setPageSize(pageable.getPageSize());
         meta.setPages(page.getTotalPages());
         meta.setTotal(page.getTotalElements());
@@ -54,7 +54,8 @@ public class UserService {
 
         List<ResUserDTO> list = page.getContent().stream().map(p -> new ResUserDTO(p.getId(), p.getEmail(), p.getName(),
                 p.getGender(), p.getAddress(), p.getAge(), p.getUpdatedAt(), p.getCreatedAt(),
-                p.getCompany() != null ? new ResUserDTO.CompanyUser(p.getCompany().getId(), p.getCompany().getName()) : null))
+                p.getCompany() != null ? new ResUserDTO.CompanyUser(p.getCompany().getId(), p.getCompany().getName())
+                        : null))
                 .collect(Collectors.toList());
         resultPaginationDTO.setResult(list);
 
