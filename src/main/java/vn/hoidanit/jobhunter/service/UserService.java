@@ -10,6 +10,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import vn.hoidanit.jobhunter.domain.Company;
+import vn.hoidanit.jobhunter.domain.Role;
 import vn.hoidanit.jobhunter.domain.User;
 import vn.hoidanit.jobhunter.domain.response.ResultPaginationDTO;
 import vn.hoidanit.jobhunter.domain.response.user.ResCreateUserDTO;
@@ -21,16 +22,23 @@ import vn.hoidanit.jobhunter.repository.UserRepository;
 public class UserService {
     private UserRepository userRepository;
     private CompanyService companyService;
+    private RoleService roleService;
 
-    public UserService(UserRepository userRepository, CompanyService companyService) {
+    public UserService(UserRepository userRepository, CompanyService companyService, RoleService roleService) {
         this.userRepository = userRepository;
         this.companyService = companyService;
+        this.roleService = roleService;
     }
 
     public User handleCreateUser(User user) {
         if (user.getCompany() != null) {
             Company company = this.companyService.handleGetCompanyById(user.getCompany().getId());
             user.setCompany(company != null ? company : null);
+        }
+
+        if (user.getRole() != null) {
+            Role role = this.roleService.handleGetRoleById(user.getRole().getId());
+            user.setRole(role != null ? role : null);
         }
 
         return this.userRepository.save(user);
@@ -52,10 +60,7 @@ public class UserService {
 
         resultPaginationDTO.setMeta(meta);
 
-        List<ResUserDTO> list = page.getContent().stream().map(p -> new ResUserDTO(p.getId(), p.getEmail(), p.getName(),
-                p.getGender(), p.getAddress(), p.getAge(), p.getUpdatedAt(), p.getCreatedAt(),
-                p.getCompany() != null ? new ResUserDTO.CompanyUser(p.getCompany().getId(), p.getCompany().getName())
-                        : null))
+        List<ResUserDTO> list = page.getContent().stream().map(p -> convertToResUser(p))
                 .collect(Collectors.toList());
         resultPaginationDTO.setResult(list);
 
@@ -84,6 +89,11 @@ public class UserService {
             if (updateUser.getCompany() != null) {
                 Company company = this.companyService.handleGetCompanyById(updateUser.getCompany().getId());
                 currentUser.setCompany(company != null ? company : null);
+            }
+
+            if (updateUser.getRole() != null) {
+                Role role = this.roleService.handleGetRoleById(updateUser.getRole().getId());
+                currentUser.setRole(role != null ? role : null);
             }
 
             return this.userRepository.save(currentUser);
@@ -165,6 +175,14 @@ public class UserService {
             companyUser.setName(user.getCompany().getName());
 
             resUser.setCompany(companyUser);
+        }
+
+        if (user.getRole() != null) {
+            ResUserDTO.RoleUser roleUser = new ResUserDTO.RoleUser();
+            roleUser.setId(user.getRole().getId());
+            roleUser.setName(user.getRole().getName());
+
+            resUser.setRole(roleUser);
         }
 
         return resUser;

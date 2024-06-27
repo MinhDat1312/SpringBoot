@@ -46,10 +46,6 @@ public class RoleController {
             throw new IdInvalidException("Role doesn't exist");
         }
 
-        if (this.roleService.existByName(role)) {
-            throw new IdInvalidException("Role exists");
-        }
-
         return ResponseEntity.ok().body(this.roleService.handleUpdateRole(role));
     }
 

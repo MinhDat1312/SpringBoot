@@ -58,7 +58,7 @@ public class UserController {
     @ApiMessage("Delete a user")
     public ResponseEntity<Void> deleteUser(@PathVariable("id") long id) throws IdInvalidException {
         if (this.userService.handleGetUserById(id) == null) {
-            throw new IdInvalidException("User don't exist");
+            throw new IdInvalidException("User doesn't exist");
         }
         this.userService.handleDeleteUser(id);
         return ResponseEntity.status(HttpStatus.OK).body(null);
@@ -77,7 +77,7 @@ public class UserController {
                 return ResponseEntity.status(HttpStatus.OK)
                         .body(this.userService.convertToResUser(user));
             } else {
-                throw new IdInvalidException("User don't exist");
+                throw new IdInvalidException("User doesn't exist");
             }
         } else {
             throw new IdInvalidException("Id is number");
@@ -89,7 +89,7 @@ public class UserController {
         User user = this.userService.handleUpdateUser(updateUser);
 
         if (user == null) {
-            throw new IdInvalidException("User don't exist");
+            throw new IdInvalidException("User doesn't exist");
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(this.userService.convertToResUpdateUser(user));

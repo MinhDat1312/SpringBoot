@@ -2,9 +2,9 @@ package vn.hoidanit.jobhunter.domain.response;
 
 public class RestResponse<T> {
     private int statusCode;
+    private String error;
     private Object message;
     private T data;
-    private String error;
 
     public int getStatusCode() {
         return statusCode;

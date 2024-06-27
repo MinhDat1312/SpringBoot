@@ -90,7 +90,12 @@ public class ResumeController {
     }
 
     @GetMapping("/resumes")
-    public ResponseEntity<ResultPaginationDTO> getAllResumes(@Filter Specification<Resume> spec, Pageable pageable){
+    public ResponseEntity<ResultPaginationDTO> getAllResumes(@Filter Specification<Resume> spec, Pageable pageable) {
         return ResponseEntity.ok().body(this.resumeService.handleGetAllResumes(spec, pageable));
+    }
+
+    @PostMapping("/resumes/by-user")
+    public ResponseEntity<ResultPaginationDTO> getResumesByUser(Pageable pageable) {
+        return ResponseEntity.ok().body(this.resumeService.handleGetResumesByUser(pageable));
     }
 }
