@@ -67,4 +67,17 @@ public class RoleController {
     public ResponseEntity<ResultPaginationDTO> getAllRoles(@Filter Specification<Role> spe, Pageable pageable) {
         return ResponseEntity.ok().body(this.roleService.handleGetAllRoles(spe, pageable));
     }
+
+    @GetMapping("/roles/{id}")
+    public ResponseEntity<Role> getRoleById(@PathVariable("id") String id) throws IdInvalidException {
+        if (Pattern.compile("^[0-9]+$").matcher(id).matches()) {
+            if (this.roleService.handleGetRoleById(Long.parseLong(id)) != null) {
+                return ResponseEntity.ok().body(this.roleService.handleGetRoleById(Long.parseLong(id)));
+            } else {
+                throw new IdInvalidException("Role doesn't exist");
+            }
+        } else {
+            throw new IdInvalidException("Id is number");
+        }
+    }
 }
