@@ -108,7 +108,8 @@ public class ResumeController {
     public ResponseEntity<ResultPaginationDTO> getAllResumes(@Filter Specification<Resume> spec, Pageable pageable) {
         List<Long> jobIds = null;
 
-        String email = SecurityUtil.getCurrentUserLogin().isPresent() ? SecurityUtil.getCurrentUserLogin().get() : "";
+        String email = SecurityUtil.getCurrentUserLogin().isPresent() == true ? SecurityUtil.getCurrentUserLogin().get()
+                : "";
         User currentUser = this.userService.handleGetUserByEmail(email);
         if (currentUser != null) {
             Company currentCompany = currentUser.getCompany();
@@ -123,7 +124,8 @@ public class ResumeController {
         Specification<Resume> jobSpec = filterSpecificationConverter
                 .convert(filterBuilder.field("job").in(filterBuilder.input(jobIds)).get());
 
-        return ResponseEntity.ok().body(this.resumeService.handleGetAllResumes(jobSpec.and(spec), pageable));
+        Specification<Resume> finalSpec = jobSpec.and(spec);
+        return ResponseEntity.ok().body(this.resumeService.handleGetAllResumes(finalSpec, pageable));
     }
 
     @PostMapping("/resumes/by-user")
