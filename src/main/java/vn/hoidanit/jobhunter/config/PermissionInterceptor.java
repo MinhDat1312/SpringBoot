@@ -14,7 +14,7 @@ import vn.hoidanit.jobhunter.domain.Role;
 import vn.hoidanit.jobhunter.domain.User;
 import vn.hoidanit.jobhunter.service.UserService;
 import vn.hoidanit.jobhunter.util.SecurityUtil;
-import vn.hoidanit.jobhunter.util.exception.IdInvalidException;
+import vn.hoidanit.jobhunter.util.exception.PermissionException;
 
 @Transactional
 public class PermissionInterceptor implements HandlerInterceptor {
@@ -43,12 +43,11 @@ public class PermissionInterceptor implements HandlerInterceptor {
                     boolean checkPermission = permissions.stream()
                             .anyMatch(p -> p.getApiPath().equals(path) && p.getMethod().equals(httpMethod));
 
-                    if(checkPermission==false){
-                        throw new IdInvalidException("You don't have permission to access");
+                    if (checkPermission == false) {
+                        throw new PermissionException("You don't have permission to access");
                     }
-                }
-                else{
-                    throw new IdInvalidException("You don't have permission to access");
+                } else {
+                    throw new PermissionException("You don't have permission to access");
                 }
             }
         }
