@@ -17,7 +17,13 @@ public class EmailController {
 
     @GetMapping("/email")
     public String sendSimpleEmail() {
-        this.emailService.handleSendEmail();
+        // this.emailService.handleSendEmail();
+
+        // this.emailService.sendEmailSync("nguyenthangdat84@gmail.com", "Send email
+        // with template",
+        // "<h1><b>MinhDat</b></h1>", false, true);
+
+        this.emailService.sendEmailFromTemplateSync("nguyenthangdat84@gmail.com", "Send email with template", "job");
         return "ok";
     }
 }
