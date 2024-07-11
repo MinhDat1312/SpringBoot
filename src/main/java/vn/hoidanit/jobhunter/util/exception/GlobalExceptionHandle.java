@@ -26,8 +26,8 @@ public class GlobalExceptionHandle {
     ResponseEntity<RestResponse<Object>> exceptionResponseEntity(Exception e) {
         RestResponse<Object> res = new RestResponse<Object>();
         res.setStatusCode(HttpStatus.BAD_REQUEST.value());
-        res.setMessage("Exception occurs");
-        res.setError(e.getMessage());
+        res.setMessage(e.getMessage());
+        res.setError("Exception occurs");
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
     }
@@ -36,8 +36,8 @@ public class GlobalExceptionHandle {
     ResponseEntity<RestResponse<Object>> notFoundException(Exception e) {
         RestResponse<Object> res = new RestResponse<Object>();
         res.setStatusCode(HttpStatus.NOT_FOUND.value());
-        res.setMessage("404 Not Found. URL may not exist");
-        res.setError(e.getMessage());
+        res.setMessage(e.getMessage());
+        res.setError("404 Not Found. URL may not exist");
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(res);
     }
@@ -60,8 +60,8 @@ public class GlobalExceptionHandle {
     ResponseEntity<RestResponse<Object>> uploadFileError(StorageException e) {
         RestResponse<Object> res = new RestResponse<>();
         res.setStatusCode(HttpStatus.BAD_REQUEST.value());
-        res.setError(e.getMessage());
-        res.setMessage("Exception upload file");
+        res.setError("Exception upload file");
+        res.setMessage(e.getMessage());
 
         return ResponseEntity.badRequest().body(res);
     }
@@ -70,8 +70,8 @@ public class GlobalExceptionHandle {
     ResponseEntity<RestResponse<Object>> handlePermissionException(PermissionException e) {
         RestResponse<Object> res = new RestResponse<>();
         res.setStatusCode(HttpStatus.FORBIDDEN.value());
-        res.setError(e.getMessage());
-        res.setMessage("Forbidden");
+        res.setError("Forbidden");
+        res.setMessage(e.getMessage());
 
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(res);
     }

@@ -94,4 +94,8 @@ public class SubscriberService {
         res.setSkills(s);
         return res;
     }
+
+    public Subscriber handleGetSubscribersSkill(String email) {
+        return this.subscriberRepository.findByEmail(email);
+    }
 }
